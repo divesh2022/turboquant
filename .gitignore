@@ -1,0 +1,21 @@
+# Ignore executables
+*.exe
+
+# Ignore object and intermediate files
+*.obj
+*.ilk
+*.pdb
+
+# Ignore libraries and exports
+*.lib
+*.exp
+*.dll
+
+# Ignore debug symbol files
+vc*.pdb
+
+# (Optional) Ignore Python bytecode
+*.pyc
+__pycache__/
+# (Optional) Ignore txt files
+*.txt
