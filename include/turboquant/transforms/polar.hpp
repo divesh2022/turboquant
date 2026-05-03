@@ -1,39 +1,28 @@
 #pragma once
-
 #include <vector>
 #include <stdexcept>
-#include <iostream>
-#include <cmath>
-
-using namespace std;
 
 namespace turboquant::transforms {
 
 /**
- * @brief Handles polar transformations for multi-dimensional signals.
- * Converts Cartesian coordinates to magnitude and phase representations.
+ * @brief Polar coordinate transform for high-dimensional vectors.
+ * Converts each Cartesian coordinate into (magnitude, phase).
  */
 class PolarTransform {
 public:
-    /**
-     * @brief Construct a new Polar Transform object.
-     * @param dimensions Dimensionality of the input vectors.
-     */
-    explicit PolarTransform(size_t dimensions = 128);
+    explicit PolarTransform(size_t dimensions);
 
     virtual ~PolarTransform() = default;
 
     /**
-     * @brief Transforms Cartesian coordinate input into magnitude and phase representation.
-     * @param input High-dimensional Cartesian input vector.
-     * @return std::vector<float> Interleaved magnitude/phase values.
+     * @brief Applies polar transform to the input vector
+     * @param input High-dimensional input vector
+     * @return Output vector containing magnitude and phase for each element
+     * @throws std::length_error if input size doesn't match dimensions
      */
-    virtual vector<float> transform(const vector<float>& input) const;
+    virtual std::vector<float> transform(const std::vector<float>& input) const;
 
-    /**
-     * @brief Get the configured dimensions of the transform.
-     */
-    size_t getDimensions() const { return dimensions_; }
+    size_t getDimensions() const;
 
 private:
     size_t dimensions_;

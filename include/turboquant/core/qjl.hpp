@@ -6,8 +6,11 @@ namespace turboquant::core {
 
 class QJL {
 public:
-    // Constructor
+    // Constructors
     QJL(size_t input_dim, size_t target_dim);
+
+    // Optional default constructor for benchmarks/tests
+    QJL();
 
     // Transform input vector into quantized output
     std::vector<int8_t> transform(const std::vector<float>& input);
