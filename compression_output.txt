@@ -1,0 +1,23 @@
+===== TurboQuant Validation Output =====
+Original Dimensions   : 16 | Targets: 4
+Mean Squared Error    : 3787.48
+Compression Loss      : -1.13817 dB
+Model Fit Score       : 0
+----------------------------------------
+Idx 0 | Original: 40.0052 | Reconstructed: 19.1491
+Idx 1 | Original: 14.0013 | Reconstructed: 19.1491
+Idx 2 | Original: 37.1357 | Reconstructed: 19.1491
+Idx 3 | Original: 42.5485 | Reconstructed: 19.1491
+Idx 4 | Original: -35.3085 | Reconstructed: 12.5908
+Idx 5 | Original: -44.8199 | Reconstructed: 12.5908
+Idx 6 | Original: -94.66 | Reconstructed: 12.5908
+Idx 7 | Original: 11.9438 | Reconstructed: 12.5908
+Idx 8 | Original: -40.0949 | Reconstructed: 103.05
+Idx 9 | Original: 59.7408 | Reconstructed: 103.05
+Idx 10 | Original: 95.9132 | Reconstructed: 103.05
+Idx 11 | Original: 24.626 | Reconstructed: 103.05
+Idx 12 | Original: 72.4825 | Reconstructed: 93.5853
+Idx 13 | Original: 50.0488 | Reconstructed: 93.5853
+Idx 14 | Original: 80.0415 | Reconstructed: 93.5853
+Idx 15 | Original: -11.6856 | Reconstructed: 93.5853
+========================================

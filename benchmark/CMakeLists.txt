@@ -1,0 +1,2 @@
+add_executable(benchmark_quant benchmark_quant.cpp)
+target_link_libraries(benchmark_quant PRIVATE turboquant_core)

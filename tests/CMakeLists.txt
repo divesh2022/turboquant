@@ -1,0 +1,5 @@
+add_executable(test_turboquant test_turboquant.cpp)
+target_link_libraries(test_turboquant PRIVATE turboquant_core)
+
+add_executable(test_qjl test_qjl.cpp)
+target_link_libraries(test_qjl PRIVATE turboquant_core)

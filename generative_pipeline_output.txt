@@ -1,0 +1,10 @@
+===========================================================
+  TurboQuant Generative Hardware-Constrained Pipeline      
+===========================================================
+
+  > Processing latent dimension: 4096
+  > Output representation      : 128 blocks
+  > Reconstructed dimension    : 4096 elements
+  > Latent Reconstruction MSE  : 6529.698180
+
+===========================================================

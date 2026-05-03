@@ -1,0 +1,59 @@
+===========================================================
+  TurboQuant: MLP & CNN Tensor Validation Pipeline         
+  Features: 4096 | Compressed Blocks: 128
+===========================================================
+
+--- Processing Sample Layer [1/5] ---
+  > MLP Baseline Output (First 4): [1.0, -1.0, -1.0, -1.0]
+  > MLP Quantized Output (First 4): [-1.0, -0.9999999999997122, -1.0, -0.9999999999995711]
+  > Baseline MLP Error: 0.027742
+  > Quantized MLP Error: 0.008124
+
+  > Baseline CNN Error: 0.353351
+  > Quantized CNN Error: 0.312735
+
+--- Processing Sample Layer [2/5] ---
+  > MLP Baseline Output (First 4): [1.0, -1.0, -1.0, -1.0]
+  > MLP Quantized Output (First 4): [1.0, -1.0, 1.0, -1.0]
+  > Baseline MLP Error: 0.026393
+  > Quantized MLP Error: 0.003791
+
+  > Baseline CNN Error: 0.281753
+  > Quantized CNN Error: 0.447078
+
+--- Processing Sample Layer [3/5] ---
+  > MLP Baseline Output (First 4): [1.0, -1.0, 0.9999999998810661, 0.999991229425428]
+  > MLP Quantized Output (First 4): [0.9999999999999958, -1.0, -1.0, -1.0]
+  > Baseline MLP Error: 0.003674
+  > Quantized MLP Error: 0.027747
+
+  > Baseline CNN Error: 0.267579
+  > Quantized CNN Error: 0.364166
+
+--- Processing Sample Layer [4/5] ---
+  > MLP Baseline Output (First 4): [-1.0, -1.0, 1.0, -1.0]
+  > MLP Quantized Output (First 4): [-1.0, 1.0, 1.0, -1.0]
+  > Baseline MLP Error: 0.019379
+  > Quantized MLP Error: 0.016956
+
+  > Baseline CNN Error: 0.675220
+  > Quantized CNN Error: 0.519667
+
+--- Processing Sample Layer [5/5] ---
+  > MLP Baseline Output (First 4): [0.9999794031781349, -1.0, -1.0, 1.0]
+  > MLP Quantized Output (First 4): [-1.0, 1.0, 1.0, -1.0]
+  > Baseline MLP Error: 0.011028
+  > Quantized MLP Error: 0.017259
+
+  > Baseline CNN Error: 0.034338
+  > Quantized CNN Error: 0.466998
+
+===========================================================
+  Final Performance Comparison Summary                     
+===========================================================
+  MLP Baseline Average Error: 0.017643
+  MLP Quantized Average Error: 0.014776
+
+  CNN Baseline Average Error: 0.322448
+  CNN Quantized Average Error: 0.422129
+===========================================================
