@@ -4,4 +4,8 @@ add_subdirectory(transforms)
 add_library(turboquant_core STATIC "")
 target_include_directories(turboquant_core PUBLIC /include)
 
-target_sources(turboquant_core PRIVATE \ \)
+# Should be something like:
+target_sources(turboquant_core PRIVATE 
+    core/qjl.cpp
+    transforms/polar.cpp
+)
