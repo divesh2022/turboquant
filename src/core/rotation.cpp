@@ -1,61 +1,48 @@
+#ifndef TURBOQUANT_CORE_ROTATION_HPP
+#define TURBOQUANT_CORE_ROTATION_HPP
+
 #include <vector>
 #include <stdexcept>
-#include <iostream>
-#include <cmath>
-#include "turboquant/core/rotation.hpp"
-
-using namespace std;
 
 namespace turboquant::core {
 
-Rotation::Rotation(size_t dimensions) : dimensions_(dimensions) {
-    if (dimensions_ == 0) {
-        throw invalid_argument("[Rotation Error] Dimension size must be greater than zero.");
-    }
-}
+/**
+ * @brief Handles rotational transformations and orthogonal projections.
+ * Implements Givens-like rotations for high-dimensional vectors.
+ */
+class Rotation {
+public:
+    /**
+     * @brief Construct a new Rotation engine
+     * @param dimensions Dimensionality of the vectors being operated on (default: 128)
+     * @throws std::invalid_argument if dimensions is zero
+     */
+    explicit Rotation(size_t dimensions = 128);
 
-Rotation::~Rotation() = default;
+    /**
+     * @brief Virtual destructor for polymorphic cleanup
+     */
+    virtual ~Rotation() = default;  // ✅ inline default destructor
 
-vector<float> Rotation::transform(const vector<float>& input, float angle) const {
-    if (input.size() != dimensions_) {
-        throw length_error("[Rotation Error] Input dimension size mismatch. Expected: " + 
-            to_string(dimensions_) + ", Got: " + to_string(input.size()));
-    }
+    /**
+     * @brief Applies a Givens-like planar rotation to the input vector
+     * @param input High-dimensional input vector
+     * @param angle Rotation angle in radians
+     * @return Rotated vector
+     * @throws std::length_error if input size doesn't match dimensions
+     */
+    virtual std::vector<float> transform(const std::vector<float>& input, float angle) const;
 
-    try {
-        vector<float> output;
-        output.reserve(input.size());
+    /**
+     * @brief Get the dimensionality
+     * @return Number of dimensions
+     */
+    size_t getDimensions() const;
 
-        float cosA = cos(angle);
-        float sinA = sin(angle);
-
-        // Process pairs of coordinates (Givens rotation)
-        for (size_t i = 0; i < input.size(); ++i) {
-            if (i + 1 < input.size()) {
-                float x1 = input[i];
-                float x2 = input[i + 1];
-
-                // Apply 2D rotation matrix
-                output.push_back(x1 * cosA - x2 * sinA);
-                output.push_back(x1 * sinA + x2 * cosA);
-                
-                i++; // Increment index since we consumed two elements
-            } else {
-                // Handle edge case for odd-dimensional vectors
-                output.push_back(input[i] * cosA);
-            }
-        }
-
-        return output;
-
-    } catch (const exception& e) {
-        cerr << "[Rotation Exception] " << e.what() << endl;
-        throw;
-    }
-}
-
-size_t Rotation::getDimensions() const {
-    return dimensions_;
-}
+private:
+    size_t dimensions_;
+};
 
 } // namespace turboquant::core
+
+#endif // TURBOQUANT_CORE_ROTATION_HPP
