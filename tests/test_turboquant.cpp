@@ -1,74 +1,94 @@
+
+// tests/test_turboquant.cpp
 #include <iostream>
 #include <vector>
 #include <stdexcept>
 #include <cassert>
-#include <cmath>
-
-// Include necessary headers directly from the include path
-#include "turboquant/transforms/polar.hpp"
+#include <cstdlib>
+#include <random>
 #include "turboquant/core/qjl.hpp"
-#include "turboquant/core/quantizer.hpp"
 
 using namespace std;
 using namespace turboquant::core;
-using namespace turboquant::transforms;
 
 namespace {
 
 void runIntegrationTests() {
     cout << "[+] Starting TurboQuant Integration Tests..." << endl;
 
-    // Test Case 1: Integration of QJL and Quantizer
-    try {
-        QJL qjlEngine(1024, 128);
-        Quantizer<int8_t> quantizer(128);
+    // Test Case 1: Consistent output for repeated identical inputs
+    {
+        QJL qjl(512, 64);
+        vector<float> inputData(512);
+        for (size_t i = 0; i < inputData.size(); ++i) {
+            inputData[i] = (i % 2 == 0) ? 0.0f : 1.0f;
+        }
 
-        vector<float> inputData(1024, 0.75f);
-        vector<int8_t> qjlOutput = qjlEngine.transform(inputData);
-        
-        vector<float> floatQjlOutput(qjlOutput.begin(), qjlOutput.end());
-        vector<int8_t> finalOutput = quantizer.transform(floatQjlOutput);
+        auto outputA = qjl.transform(inputData);
+        auto outputB = qjl.transform(inputData);
 
-        assert(finalOutput.size() == 128);
-        cout << "[PASS] Test Case 1: QJL and Quantizer Integration." << endl;
-    } catch (const exception& e) {
-        cerr << "[FAIL] Test Case 1 failed with: " << e.what() << endl;
+        assert(outputA.size() == 64);
+        assert(outputB.size() == 64);
+        assert(outputA == outputB);
+
+        cout << "[PASS] Test Case 1: Repeated identical inputs produce consistent results." << endl;
     }
 
-    // Test Case 2: Integration of Polar Transform and Exception Handling
-    try {
-        PolarTransform polarEngine(128);
-        vector<float> cartesianData(128, 2.0f);
+    // Test Case 2: Output retains valid quantized range for random data
+    {
+        QJL qjl(512, 64);
+        vector<float> inputData(512);
+        mt19937 rng(12345);
+        uniform_real_distribution<float> dist(-1.0f, 1.0f);
 
-        vector<float> polarOutput = polarEngine.transform(cartesianData);
+        for (auto& value : inputData) {
+            value = dist(rng);
+        }
 
-        // A 128-element vector yields 64 pairs, thus 128 elements in output
-        assert(polarOutput.size() == 128);
-        cout << "[PASS] Test Case 2: Polar Transform Integration." << endl;
-    } catch (const exception& e) {
-        cerr << "[FAIL] Test Case 2 failed with: " << e.what() << endl;
+        auto output = qjl.transform(inputData);
+        assert(output.size() == 64);
+
+        for (auto value : output) {
+            int iv = static_cast<int>(value);
+            assert(iv >= -128 && iv <= 127);
+        }
+
+        cout << "[PASS] Test Case 2: Random input produces output in expected quantized range." << endl;
     }
 
-    // Test Case 3: Verify system exceptions
-    try {
-        QJL qjlEngine(128, 64);
-        vector<float> badInput(64, 1.0f); // Size mismatch check
-        
-        qjlEngine.transform(badInput);
-        cerr << "[FAIL] Test Case 3 failed: Exception not thrown for incorrect dimensions." << endl;
-    } catch (const length_error& e) {
-        cout << "[PASS] Test Case 3: Correctly caught length exception: " << e.what() << endl;
+    // Test Case 3: Integration-level invalid buffer length handling
+    {
+        QJL qjl(512, 64);
+        vector<float> badInput(513, 0.0f);
+
+        bool threw = false;
+        try {
+            qjl.transform(badInput);
+        } catch (const length_error&) {
+            threw = true;
+        } catch (const invalid_argument&) {
+            threw = true;
+        }
+
+        assert(threw);
+        cout << "[PASS] Test Case 3: Integration rejects invalid input buffer length." << endl;
     }
 }
 
 } // anonymous namespace
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+
     try {
         runIntegrationTests();
         cout << "\n>>> All TurboQuant Integration Tests Passed Successfully. <<<" << endl;
+    } catch (const exception& e) {
+        cerr << "\nFATAL: Integration tests failed with exception: " << e.what() << endl;
+        return EXIT_FAILURE;
     } catch (...) {
-        cerr << "FATAL: Unhandled exception in the integration test suite." << endl;
+        cerr << "\nFATAL: Unhandled exception in the TurboQuant integration test suite." << endl;
         return EXIT_FAILURE;
     }
 

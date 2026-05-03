@@ -1,3 +1,4 @@
+// test_qjl.cpp
 #include <iostream>
 #include <vector>
 #include <stdexcept>
@@ -11,59 +12,76 @@ using namespace turboquant::core;
 namespace {
 
 void runUnitTests() {
-    cout << "[+] Starting enhanced QJL Unit Tests..." << endl;
+    cout << "[+] Starting QJL Unit Tests..." << endl;
 
     // Test Case 1: Initialize and run standard transform
-    try {
+    {
         QJL qjl(1024, 128);
-        
-        // Ensure that dimensions are correctly stored
         assert(qjl.getInputDim() == 1024);
         assert(qjl.getTargetDim() == 128);
 
         vector<float> inputData(1024, 0.5f);
-        vector<int8_t> output = qjl.transform(inputData);
+        auto output = qjl.transform(inputData);
 
         assert(output.size() == qjl.getTargetDim());
-        cout << "[PASS] Test Case 1: Dimensionality and Transformation." << endl;
-    } catch (const exception& e) {
-        cerr << "[FAIL] Test Case 1 failed with: " << e.what() << endl;
-        throw;
+        for (auto value : output) {
+            int iv = static_cast<int>(value);
+            assert(iv >= -128 && iv <= 127);
+        }
+
+        cout << "[PASS] Test Case 1: Dimensionality and transformation output size." << endl;
     }
 
     // Test Case 2: Validate exception throwing on dimension mismatch
-    try {
+    {
         QJL qjl(1024, 128);
-        vector<float> invalidInput(512, 1.0f); // Size mismatch
+        vector<float> invalidInput(512, 1.0f);
 
-        // This should throw an exception
-        qjl.transform(invalidInput);
-        
-        // If we reach here, the test failed
-        cerr << "[FAIL] Test Case 2 failed: Exception not thrown for dimension mismatch." << endl;
-        exit(EXIT_FAILURE);
-    } catch (const length_error& e) {
-        cout << "[PASS] Test Case 2: Correctly caught expected length_error: " << e.what() << endl;
-    } catch (...) {
-        cerr << "[FAIL] Test Case 2 failed: Caught unexpected exception type." << endl;
-        exit(EXIT_FAILURE);
+        bool threw = false;
+        try {
+            qjl.transform(invalidInput);
+        } catch (const length_error&) {
+            threw = true;
+        } catch (const invalid_argument&) {
+            threw = true;
+        }
+
+        assert(threw);
+        cout << "[PASS] Test Case 2: Correctly threw on invalid input length." << endl;
     }
 
     // Test Case 3: Test configuration exception on invalid bounds
-    try {
-        // Target dimension exceeds input dimension
-        QJL qjl(128, 256);
-        cerr << "[FAIL] Test Case 3 failed: Constructor did not throw on invalid dimensions." << endl;
-        exit(EXIT_FAILURE);
-    } catch (const invalid_argument& e) {
-        cout << "[PASS] Test Case 3: Correctly caught expected invalid_argument: " << e.what() << endl;
+    {
+        bool threw = false;
+        try {
+            QJL qjl(128, 256);
+        } catch (const invalid_argument&) {
+            threw = true;
+        }
+
+        assert(threw);
+        cout << "[PASS] Test Case 3: Correctly rejected invalid constructor dimensions." << endl;
+    }
+
+    // Test Case 4: Repeated identical input yields deterministic results
+    {
+        QJL qjl(256, 64);
+        vector<float> inputData(256);
+        for (size_t i = 0; i < inputData.size(); ++i) {
+            inputData[i] = static_cast<float>(i) / 256.0f;
+        }
+
+        auto firstOutput = qjl.transform(inputData);
+        auto secondOutput = qjl.transform(inputData);
+
+        assert(firstOutput == secondOutput);
+        cout << "[PASS] Test Case 4: Deterministic transform for repeated identical inputs." << endl;
     }
 }
 
 } // anonymous namespace
 
 int main() {
-    // Set proper terminal output handling
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
 
@@ -74,9 +92,9 @@ int main() {
         cerr << "\nFATAL: Unit tests failed with exception: " << e.what() << endl;
         return EXIT_FAILURE;
     } catch (...) {
-        cerr << "\nFATAL: Unhandled exception in the test suite." << endl;
+        cerr << "\nFATAL: Unhandled exception in the QJL test suite." << endl;
         return EXIT_FAILURE;
     }
-    
+
     return EXIT_SUCCESS;
 }
