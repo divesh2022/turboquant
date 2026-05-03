@@ -19,3 +19,5 @@ vc*.pdb
 __pycache__/
 # (Optional) Ignore txt files
 *.txt
+# Ignore python files
+.py
